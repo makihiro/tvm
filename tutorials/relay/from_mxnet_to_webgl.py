@@ -269,7 +269,7 @@ def deploy_local():
 
     lib.export_library(path_lib)
     with open(path_graph_json, "w") as fo:
-        fo.write(deploy_graph.json())
+        fo.write(deploy_graph)
     with open(path_params, "wb") as fo:
         fo.write(relay.save_param_dict(deploy_params))
 
@@ -467,7 +467,7 @@ def deploy_web():
         "-s", "TOTAL_MEMORY=1073741824",
     ])
     with open(path_graph, "w") as fo:
-        fo.write(graph.json())
+        fo.write(graph)
     with open(path_params, "w") as fo:
         fo.write(base64.b64encode(relay.save_param_dict(params)))
 
