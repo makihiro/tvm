@@ -426,7 +426,14 @@ def deploy_web():
     import json
     import os
     import shutil
-    import SimpleHTTPServer, SocketServer
+    #import SimpleHTTPServer, SocketServer
+    import sys
+    if sys.version_info < (3, 0, 0):
+        import SimpleHTTPServer as server
+        import SocketServer as socketserver
+    else:
+        import http.server as server
+        from http.server import socketserver
 
     from tvm.contrib import emscripten
 
@@ -492,8 +499,8 @@ def deploy_web():
     print("Now running a simple server to serve the files...")
     os.chdir(output_dir)
     port = 8080
-    handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-    httpd = SocketServer.TCPServer(("", port), handler)
+    handler = server.SimpleHTTPRequestHandler
+    httpd = socketserver.TCPServer(("", port), handler)
     print("Please open http://localhost:" + str(port) + "/resnet.html")
     httpd.serve_forever()
 
