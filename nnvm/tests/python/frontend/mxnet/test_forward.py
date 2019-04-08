@@ -344,6 +344,7 @@ if __name__ == '__main__':
     test_forward_lrn()
     test_forward_ones()
     test_forward_zeros()
+    test_forward_arange()
     test_forward_ones_like()
     test_forward_zeros_like()
     test_forward_argmax()
