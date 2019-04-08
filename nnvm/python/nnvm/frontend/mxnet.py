@@ -287,6 +287,10 @@ def _zeros(_, attrs):
     op_name = 'zeros'
     return get_nnvm_op(op_name)(**attrs)
 
+def _arange(_, attrs):
+    op_name = 'arange'
+    return get_nnvm_op(op_name)(**attrs)
+
 def _argmax(inputs, attrs):
     op_name, new_attrs = 'argmax', {}
     new_attrs['dtype'] = 'float32'
@@ -327,6 +331,7 @@ _convert_map = {
     '_maximum'      : _maximum,
     '_ones'         : _ones,
     '_zeros'        : _zeros,
+    "_arange"       : _arange,
     'argmax'        : _argmax,
     'argmin'        : _argmin,
     'Activation'    : _activations,

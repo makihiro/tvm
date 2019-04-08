@@ -165,6 +165,43 @@ def test_forward_zeros():
     mx_sym = mx.sym.elemwise_add(data, zeros)
     verify_mxnet_frontend_impl(mx_sym, (2, 3, 4), (2, 3, 4))
 
+def test_forward_arange():
+    def _mx_symbol(F, start, stop, step):
+        if start is None and step is None:
+            sym = F.arange(stop)
+        elif start is None:
+            sym = F.arange(stop, step=step)
+        elif step is None:
+            sym = F.arange(start, stop)
+        else:
+            sym = F.arange(start, stop, step)
+        return sym
+
+    def verify(start, stop, step):
+        ref_res = _mx_symbol(mx.nd, start, stop, step).asnumpy()
+        mx_sym = _mx_symbol(mx.sym, start, stop, step)
+
+        new_sym, params = frontend.from_mxnet(mx_sym)
+        shape_dict = {'a': dshape, 'b': dshape}
+        for target, ctx in ctx_list():
+            with nnvm.compiler.build_config(opt_level=3):
+                graph, lib, params = nnvm.compiler.build(new_sym, target, shape_dict, params=params)
+            m = graph_runtime.create(graph, lib, ctx)
+            m.set_input(**params)
+            m.run()
+            tvm_out = m.get_output(0, tvm.nd.empty(out_shape, dtype)).asnumpy()
+            tvm.testing.assert_allclose(tvm_out, ref_res)
+
+    verify(0, 20, None)
+    verify(0, 20, 2)
+    verify(1, 20, None)
+    verify(1, 20, 2)
+    verify(1, 20, 1.5)
+    verify(1, 20.5, None)
+    verify(1, 20, 3)
+    verify(20, 1, -1)
+    verify(20, 1, -1.5)
+
 def test_forward_ones_like():
     data = mx.sym.var('data')
     mx_sym = mx.sym.ones_like(data, dtype='float32')
