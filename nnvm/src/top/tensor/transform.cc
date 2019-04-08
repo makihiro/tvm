@@ -1478,16 +1478,12 @@ Examples::
 })
 .set_support_level(3);
 
-}  // namespace top
-}  // namespace nnvm
-
 // arange operator
 NNVM_REGISTER_OP(arange)
 .describe(R"code(Returns evenly spaced values within a given interval.
 
 )code" NNVM_ADD_FILELINE)
 .set_num_inputs(0)
-.set_support_level(3);
 .set_attr<FTVMCompute>(
   "FTVMCompute", [](const NodeAttrs& attrs,
                     const Array<Tensor>& inputs,
@@ -1495,4 +1491,8 @@ NNVM_REGISTER_OP(arange)
     return Array<Tensor>{
       topi::arange(attrs->start, attrs->stop, attrs->step, attrs->dtype)
     };
-  });
+})
+.set_support_level(3);
+
+}  // namespace top
+}  // namespace nnvm
