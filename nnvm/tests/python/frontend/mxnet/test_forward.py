@@ -180,14 +180,12 @@ def test_forward_arange():
     def verify(start, stop, step):
         ref_res = _mx_symbol(mx.nd, start, stop, step).asnumpy()
         mx_sym = _mx_symbol(mx.sym, start, stop, step)
-
         new_sym, params = frontend.from_mxnet(mx_sym)
-        shape_dict = {'a': dshape, 'b': dshape}
+        shape_dict = {'data': ref_res.shape}
         for target, ctx in ctx_list():
             with nnvm.compiler.build_config(opt_level=3):
-                graph, lib, params = nnvm.compiler.build(new_sym, target, shape_dict, params=params)
+                graph, lib, _ = nnvm.compiler.build(new_sym, target, shape_dict)
             m = graph_runtime.create(graph, lib, ctx)
-            m.set_input(**params)
             m.run()
             tvm_out = m.get_output(0, tvm.nd.empty(out_shape, dtype)).asnumpy()
             tvm.testing.assert_allclose(tvm_out, ref_res)

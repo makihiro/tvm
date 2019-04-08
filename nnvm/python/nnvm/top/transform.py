@@ -90,3 +90,7 @@ reg.register_schedule("where", _fschedule_injective)
 # gather_nd
 reg.register_pattern("gather_nd", OpPattern.INJECTIVE)
 reg.register_schedule("gather_nd", _fschedule_injective)
+
+# arange
+reg.register_pattern("arange", OpPattern.INJECTIVE)
+reg.register_schedule("arange", _fschedule_injective)
