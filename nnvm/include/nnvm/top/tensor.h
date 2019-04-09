@@ -298,6 +298,21 @@ struct SliceLikeParam : public dmlc::Parameter<SliceLikeParam> {
   }
 };
 
+struct ArangeParam : public dmlc::Parameter<ArangeParam> {
+  double start, stop, step;
+  int dtype;
+  DMLC_DECLARE_PARAMETER(ArangeParam) {
+    DMLC_DECLARE_FIELD(start)
+      .describe("Start of interval.");
+    DMLC_DECLARE_FIELD(stop)
+      .describe("End of interval.");
+    DMLC_DECLARE_FIELD(step)
+      .describe("Spacing between values.");
+    DMLC_DECLARE_DTYPE_FIELD(dtype).set_default(kInt32)
+      .describe("Target data type.");
+    }
+};
+
 }  // namespace top
 }  // namespace nnvm
 

@@ -1479,17 +1479,29 @@ Examples::
 .set_support_level(3);
 
 // arange operator
+DMLC_REGISTER_PARAMETER(ArangeParam);
+
+inline void ArangeParamParser(nnvm::NodeAttrs* attrs) {
+  ArangeParam param;
+  param.Init(attrs->dict);
+  attrs->parsed = std::move(param);
+}
+
 NNVM_REGISTER_OP(arange)
 .describe(R"code(Returns evenly spaced values within a given interval.
 
 )code" NNVM_ADD_FILELINE)
+.add_arguments(ArangeParam::__FIELDS__())
+.set_attr_parser(ArangeParamParser)
+.set_attr<FGetAttrDict>("FGetAttrDict", ParamGetAttrDict<ArangeParam>)
 .set_num_inputs(0)
 .set_attr<FTVMCompute>(
   "FTVMCompute", [](const NodeAttrs& attrs,
                     const Array<Tensor>& inputs,
                     const Array<Tensor>& out_info) {
+    const ArangeParam& param = nnvm::get<ArangeParam>(attrs.parsed);
     return Array<Tensor>{
-      topi::arange(attrs->start, attrs->stop, attrs->step, attrs->dtype)
+      topi::arange(param.start, param.stop, param.step, param.dtype)
     };
 })
 .set_support_level(3);
